@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter import messagebox
+
 class FloodRiskAnalyzer:
     def __init__(self, rainfall, river_level, wind_speed):
         self.rainfall = rainfall  # in mm
@@ -35,15 +38,54 @@ class FloodRiskAnalyzer:
         return self.alerts if self.alerts else ["✅ No immediate flood risks detected."]
 
 
-# Example: Input weather conditions
-rainfall = 120  # mm
-river_level = 5.5  # meters
-wind_speed = 90  # km/h
+# GUI Application
+def analyze_flood_risk():
+    try:
+        rainfall = float(rainfall_entry.get())
+        river_level = float(river_level_entry.get())
+        wind_speed = float(wind_speed_entry.get())
 
-# Run Flood Risk Analyzer
-analyzer = FloodRiskAnalyzer(rainfall, river_level, wind_speed)
-alerts = analyzer.analyze()
+        analyzer = FloodRiskAnalyzer(rainfall, river_level, wind_speed)
+        alerts = analyzer.analyze()
 
-# Display results
-for alert in alerts:
-    print(alert)
+        # Show results in a messagebox
+        result_text = "\n".join(alerts)
+        if "EMERGENCY ALERT" in result_text:
+            messagebox.showerror("🚨 SEVERE FLOOD WARNING!", result_text)
+        elif "Critical" in result_text or "Heavy Rainfall" in result_text:
+            messagebox.showwarning("⚠️ Flood Risk Alert", result_text)
+        else:
+            messagebox.showinfo("✅ No Immediate Risk", result_text)
+
+    except ValueError:
+        messagebox.showerror("Input Error", "❌ Please enter valid numeric values.")
+
+# Create the main window
+root = tk.Tk()
+root.title("Flood Risk Analyzer")
+root.geometry("400x350")
+root.configure(bg="#f0f0f0")
+
+# Title Label
+title_label = tk.Label(root, text="Flood Risk Analyzer", font=("Arial", 16, "bold"), bg="#f0f0f0", fg="black")
+title_label.pack(pady=10)
+
+# Input Fields
+tk.Label(root, text="Enter Rainfall (mm):", bg="#f0f0f0").pack()
+rainfall_entry = tk.Entry(root)
+rainfall_entry.pack()
+
+tk.Label(root, text="Enter River Level (m):", bg="#f0f0f0").pack()
+river_level_entry = tk.Entry(root)
+river_level_entry.pack()
+
+tk.Label(root, text="Enter Wind Speed (km/h):", bg="#f0f0f0").pack()
+wind_speed_entry = tk.Entry(root)
+wind_speed_entry.pack()
+
+# Analyze Button
+analyze_button = tk.Button(root, text="Analyze Flood Risk", command=analyze_flood_risk, bg="blue", fg="white", font=("Arial", 12))
+analyze_button.pack(pady=15)
+
+# Run the GUI
+root.mainloop()
